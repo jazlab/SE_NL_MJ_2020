@@ -179,13 +179,14 @@ class ChainedTwoNeuronModules:
             theta_next = module.theta + module.get_feedback(t_feedback)
 
 
-## Define an object class for multiple neurons module
-class MultipleNeuronModule:
-    def __init__(self, Wut, Wvt, Wuv, Wvu, theta, tau, dt, 
+## Define an object class for simulation
+class MultiNeuronModule:
+    def __init__(self, Winh, Wexc, theta, tau, dt, 
                  sigma_mu, sigma_sigma, threshold, K=0):
         '''Initialize a two-neuron module with parameters:
-        Wut, Wvt, Wuv, Wvu: weights of the connections between u, v, and input (theta)
-        theta: input
+        Winh: matrix of inhibitory connections between neurons
+		Wexc: matrix of excitatory connections between neurons
+        theta: common input to all neurons
         tau: time constant
         dt: time step for simulation
         sigma_mu: indicates fluctuation in the mean between trials
@@ -193,10 +194,8 @@ class MultipleNeuronModule:
         threshold: threshold for behavior, used to determine tp
         K: constant for updating
         '''
-        self.Wut = Wut
-        self.Wvt = Wvt
-        self.Wuv = Wuv
-        self.Wvu = Wvu
+        
+        # TODO: Is theta necessary here?
         self.theta = theta
         self.tau = tau
         self.dt = dt
@@ -205,14 +204,14 @@ class MultipleNeuronModule:
         self.ext = 0
         self.threshold = threshold
         self.K = K
-        self.Winh = np.matrix([[0, -Wuv], [-Wvu, 0]])
-        self.Wexc = np.matrix([[0, 0], [0, 0]])
+        self.Winh = Winh
+        self.Wexc = Wexc
         self.state = np.matrix([0])
  
-    def _initialize_state(self, u_init, v_init, ntrials, set_theta, theta):
+    def _initialize_state(self, init_state, ntrials, set_theta, theta):
         '''Initialize n states, each set to (u_init, v_init)
         ****Parameters****
-        u_init, v_init: initial state of u and v
+        init_state: an array of initial values for all neurons
         ntrials: number of trials to simulate
         set_theta: if True, reset the default theta
         theta: if set_theta is True, use this theta as the input to the module '''
@@ -221,7 +220,7 @@ class MultipleNeuronModule:
         if set_theta:
             self.theta = theta
             
-        self.state = np.matrix([[u_init] * ntrials, [v_init] * ntrials])
+        self.state = np.tile(init_state, (ntrials, 1)).T
         
     def _find_dstate(self):
         '''Find the change in the state vector at each update
@@ -230,7 +229,7 @@ class MultipleNeuronModule:
         x = self.state
         noise = np.random.normal(loc=0, scale=self.sigma_sigma, size=self.state.shape)
         #print(noise)
-        return (-x + thresh_exp(self.Wut * self.theta + self.Winh * x + \
+        return (-x + thresh_exp(self.theta + self.Winh * x + \
                                 self.Wexc * x + self.ext + noise)) / self.tau
 
     def _find_u_dot_multi(self):
@@ -249,7 +248,7 @@ class MultipleNeuronModule:
         '''Based on the current state, update to the state in the next time step'''
         self.state += self._find_dstate() * self.dt
     
-    def simulate_full_trial(self, u_init, v_init, ntrials, nsteps, set_theta=False, theta=0):
+    def simulate_full_trial(self, init_state, ntrials, nsteps, set_theta=False, theta=0):
         '''Simulate a full trial
         **** Parameters ****
         u_init, v_init: floats, initial state
@@ -260,21 +259,15 @@ class MultipleNeuronModule:
         **** Output ****
         U, V: numpy arrays of dimension ntrials x nsteps,
         the states of u and v over the course of simulation'''
-        self._initialize_state(u_init, v_init, ntrials, set_theta, theta)
-        self.u_lst = []
-        self.v_lst = []        
-        
+        self._initialize_state(init_state, ntrials, set_theta, theta)
+        self.history = np.zeros((len(init_state), ntrials, nsteps))      
+                
         for i in range(nsteps):
             curr_state = self.state.copy()
-            ustate_copy = np.squeeze(np.asarray(curr_state[0]))
-            vstate_copy = np.squeeze(np.asarray(curr_state[1]))
-            self.u_lst.append(ustate_copy)
-            self.v_lst.append(vstate_copy)
+            self.history[:,:,i] = curr_state
             self._update_state()
         
-        self.u_lst = np.vstack(self.u_lst)
-        self.v_lst = np.vstack(self.v_lst)
-        return self.u_lst, self.v_lst
+        return self.history
     
     def get_decision_v(self):
         '''Returns a numpy array of dimension ntrials x nsteps,
