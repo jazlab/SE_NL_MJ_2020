@@ -273,7 +273,9 @@ class MultiNeuronModule:
         '''Returns a numpy array of dimension ntrials x nsteps,
         the projection of the (u, v) state onto the recurrent axis
         '''
-        return self.u_lst - self.v_lst
+        ulst = np.squeeze(self.history[0,:,:]).T
+        vlst = np.squeeze(self.history[1,:,:]).T
+        return ulst - vlst
     
     def get_feedback(self, time_feedback):
         '''**** Parameters ****
@@ -286,7 +288,7 @@ class MultiNeuronModule:
     def find_tp(self):
         decision_v = self.get_decision_v()
         times_lst = []
-        for k in range(self.u_lst.shape[1]):
+        for k in range(self.history.shape[1]):
             if np.max(decision_v[:, k]) > self.threshold:
                 times_lst.append(np.nonzero(decision_v[:, k] > self.threshold)[0][0])
             else:
