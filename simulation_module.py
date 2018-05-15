@@ -6,7 +6,6 @@ import numpy as np
 
 
 ### Functions for simulation
-
 def thresh_exp(x):
     '''Activation function'''
     return 1 / (1 + np.exp(-x))
@@ -94,11 +93,16 @@ class TwoNeuronModule:
 
     def _update_state(self):
         '''Based on the current state, update to the state in the next time step'''
-        order = np.random.randint(0, 2) # Choose to update u or v first
+        order = 1 #np.random.randint(0, 2) # Choose to update u or v first
         if order:
-            self.ustate = self.ustate + self._find_u_dot_multi() * self.dt
-            self.vstate = self.vstate + self._find_v_dot_multi() * self.dt
+            print('Order is 1')
+            ustate = self.ustate + self._find_u_dot_multi() * self.dt
+            vstate = self.vstate + self._find_v_dot_multi() * self.dt
+            self.ustate = ustate
+            self.vstate = vstate
+            
         else:
+            print('Not here')
             self.vstate = self.vstate + self._find_v_dot_multi() * self.dt
             self.ustate = self.ustate + self._find_u_dot_multi() * self.dt
     
