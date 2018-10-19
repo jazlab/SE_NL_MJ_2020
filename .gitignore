@@ -103,3 +103,6 @@ ENV/
 # PDFs
 *.pdf
 *.png
+
+# Data
+*.mat

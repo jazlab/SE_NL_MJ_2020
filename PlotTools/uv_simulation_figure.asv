@@ -1,0 +1,25 @@
+load uv_simulation_data101518.mat
+
+dt = PARAMS.dt;
+[nsteps, ntrials] = size(ulst);
+
+tlst = 1:nsteps * dt;
+
+figure;
+subplot(4,1,1)
+plot(ulst)
+ylim(0, 1);
+mymakeaxis(gca, 'yticks',[0 1], 'y_label', 'u')
+
+subplot(4,1,2)
+plot(vlst)
+mymakeaxis(gca,'y_label', 'v')
+
+subplot(4,1,3)
+plot(ylst)
+mymakeaxis(gca,'y_label', 'y')
+
+subplot(4,1,4)
+plot(Ilst)
+mymakeaxis(gca,'y_label', 'I')
+%plot(
