@@ -15,8 +15,10 @@ end
 
 ylim([0.7, 1]);
 alpha(0.5)
-mymakeaxis(gca, 'yticks',[0.7, 1], 'y_label', 'u')
+hold on;
 plotFlashes(dt, 3)
+mymakeaxis(gca, 'yticks',[0.7, 1], 'y_label', 'u', 'xticks', [0.8, 1.6, 2.4])
+
 
 subplot(4,1,2)
 h2 = plot(tstamps, vlst(:,1:10), 'Color',projectColorMaps('epoch','samples',1,'sampleDepth',1),...
@@ -26,7 +28,9 @@ for i = 1:10
 end
 alpha(0.05)
 ylim([0.2, 0.5])
-mymakeaxis(gca,'y_label', 'v', 'yticks', [0.2, 0.5])
+hold on;
+plotFlashes(dt, 3)
+mymakeaxis(gca,'y_label', 'v', 'yticks', [0.2, 0.5], 'xticks', [0.8, 1.6, 2.4])
 plotFlashes(dt, 3)
 %plotVertical(80);
 
@@ -39,8 +43,9 @@ end
 ylim([0.5, 0.8])
 hold on;
 plotHorizontal(0.7);
-mymakeaxis(gca,'y_label', 'y', 'yticks', [0.5, 0.7])
 plotFlashes(dt, 3)
+mymakeaxis(gca,'y_label', 'y', 'yticks', [0.5, 0.7], 'xticks', [0.8, 1.6, 2.4])
+
 %plotVertical(80);
 
 subplot(4,1,4)
@@ -51,8 +56,10 @@ for i = 1:10
     h4(i).Color = [0,0,0,0.1];
 end
 alpha(0.5)
-mymakeaxis(gca,'y_label', 'I', 'x_label', 'Time (ms)')
+hold on;
 plotFlashes(dt, 3)
+mymakeaxis(gca,'y_label', 'I', 'x_label', 'Time (s)', 'xticks', [0.8, 1.6, 2.4])
+
 
 function plotFlashes(dt, nFlash)
     for i = 1:nFlash
