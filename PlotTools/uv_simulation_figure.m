@@ -1,68 +1,139 @@
-load uv_simulation_data101518.mat
+%% Left panel: 400 ms interval simulation
+load uv_simulation_data102618_sigma0-01_K3_I0-765_400ms.mat
 
 dt = double(PARAMS.dt);
 [nsteps, ntrials] = size(ulst);
+duration = double(duration);
 
 tstamps = double(1:nsteps) * double(dt) / 1000;
 
 figure;
-subplot(4,1,1)
+
+l1 = subplot(4,2,1);
 h1 = plot(tstamps, ulst(:,1:10), 'Color',projectColorMaps('epoch','samples',1,'sampleDepth',1),...
     'LineWidth',2);
 for i = 1:10
     h1(i).Color = [0,0,0,0.1];
 end
 
-ylim([0.7, 1]);
-alpha(0.5)
+xlim([0, 4.2])
+ylim([0.8, 1]);
 hold on;
-plotFlashes(dt, 3)
-mymakeaxis(gca, 'yticks',[0.7, 1], 'y_label', 'u', 'xticks', [0.8, 1.6, 2.4])
+plotFlashes(dt, duration/10, 5)
+mymakeaxis(gca, 'yticks',[0.8, 1], 'y_label', '$u$', 'interpreter', ...
+    'latex', 'xytitle', '$\Delta T = 400 ms$')
 
 
-subplot(4,1,2)
+l2 = subplot(4,2,3);
 h2 = plot(tstamps, vlst(:,1:10), 'Color',projectColorMaps('epoch','samples',1,'sampleDepth',1),...
     'LineWidth',2);
 for i = 1:10
     h2(i).Color = [0,0,0,0.1];
 end
-alpha(0.05)
-ylim([0.2, 0.5])
+xlim([0, 4.2])
+ylim([0.2, 0.4])
 hold on;
-plotFlashes(dt, 3)
-mymakeaxis(gca,'y_label', 'v', 'yticks', [0.2, 0.5], 'xticks', [0.8, 1.6, 2.4])
-plotFlashes(dt, 3)
-%plotVertical(80);
+plotFlashes(dt, duration/10, 5)
+mymakeaxis(gca,'y_label', '$v$', 'interpreter', 'latex', 'yticks', [0.2, 0.4])
 
-subplot(4,1,3)
+l3 = subplot(4,2,5);
 h3 = plot(tstamps, ylst(:,1:10), 'Color',projectColorMaps('epoch','samples',1,'sampleDepth',1),...
     'LineWidth',2);
 for i = 1:10
     h3(i).Color = [0,0,0,0.1];
 end
-ylim([0.5, 0.8])
+xlim([0, 4.2])
+ylim([0.5, 0.72])
 hold on;
 plotHorizontal(0.7);
-plotFlashes(dt, 3)
-mymakeaxis(gca,'y_label', 'y', 'yticks', [0.5, 0.7], 'xticks', [0.8, 1.6, 2.4])
+plotFlashes(dt, duration/10, 5)
+mymakeaxis(gca,'y_label', '$y$', 'interpreter', 'latex', 'yticks', [0.6, 0.7])
 
-%plotVertical(80);
 
-subplot(4,1,4)
+l4 = subplot(4,2,7);
 h4 = plot(tstamps, Ilst(:,1:10), 'Color',projectColorMaps('epoch','samples',1,'sampleDepth',1),...
     'LineWidth',2);
-ylim([0.77, 0.79])
 for i = 1:10
     h4(i).Color = [0,0,0,0.1];
 end
-alpha(0.5)
+xlim([0, 4.2])
+ylim([0.735, 0.78]);
 hold on;
-plotFlashes(dt, 3)
-mymakeaxis(gca,'y_label', 'I', 'x_label', 'Time (s)', 'xticks', [0.8, 1.6, 2.4])
+plotFlashes(dt, duration/10, 5)
+mymakeaxis(gca,'y_label', '$I$', 'interpreter', 'latex', 'x_label', ...
+    'Time (s)')
+
+%% Right panel: 800 ms interval simulation
+load uv_simulation_data102618_sigma0-01_K3_I0-765_800ms.mat
+
+dt = double(PARAMS.dt);
+[nsteps, ntrials] = size(ulst);
+duration = double(duration);
+
+tstamps = double(1:nsteps) * double(dt) / 1000;
+
+r1 = subplot(4,2,2);
+h1 = plot(tstamps, ulst(:,1:10), 'Color',projectColorMaps('epoch','samples',1,'sampleDepth',1),...
+    'LineWidth',2);
+for i = 1:10
+    h1(i).Color = [0,0,0,0.1];
+end
+
+xlim([0, 4.2])
+ylim([0.8, 1]);
+hold on;
+plotFlashes(dt, duration/10, 5)
+mymakeaxis(gca, 'yticks',[0.8, 1], 'y_label', '$u$', 'interpreter', 'latex',...
+    'xytitle', '$\Delta T = 800 ms$')
 
 
-function plotFlashes(dt, nFlash)
+r2 = subplot(4,2,4);
+h2 = plot(tstamps, vlst(:,1:10), 'Color',projectColorMaps('epoch','samples',1,'sampleDepth',1),...
+    'LineWidth',2);
+for i = 1:10
+    h2(i).Color = [0,0,0,0.1];
+end
+xlim([0, 4.2])
+ylim([0.2, 0.4])
+hold on;
+plotFlashes(dt, duration/10, 5)
+mymakeaxis(gca,'y_label', '$v$', 'interpreter', 'latex', 'yticks', [0.2, 0.4])
+
+r3 = subplot(4,2,6);
+h3 = plot(tstamps, ylst(:,1:10), 'Color',projectColorMaps('epoch','samples',1,'sampleDepth',1),...
+    'LineWidth',2);
+for i = 1:10
+    h3(i).Color = [0,0,0,0.1];
+end
+xlim([0, 4.2])
+ylim([0.5, 0.72])
+hold on;
+plotHorizontal(0.7);
+plotFlashes(dt, duration/10, 5)
+mymakeaxis(gca,'y_label', '$y$', 'interpreter', 'latex', 'yticks', [0.6, 0.7])
+
+
+r4 = subplot(4,2,8);
+h4 = plot(tstamps, Ilst(:,1:10), 'Color',projectColorMaps('epoch','samples',1,'sampleDepth',1),...
+    'LineWidth',2);
+for i = 1:10
+    h4(i).Color = [0,0,0,0.1];
+end
+xlim([0, 4.2])
+ylim([0.735, 0.78]);
+hold on;
+plotFlashes(dt, duration/10, 5)
+mymakeaxis(gca,'y_label', '$I$', 'interpreter', 'latex', 'x_label', 'Time (s)')
+
+%% Link axes
+linkaxes([l1 r1], 'x')
+linkaxes([l2 r2], 'x')
+linkaxes([l3 r3], 'x')
+linkaxes([l4 r4], 'x')
+
+function plotFlashes(dt, target, nFlash)
     for i = 1:nFlash
-        plotVertical(dt * 80 * i / 1000)
+        disp(dt * target * i / 1000)
+        plotVertical(dt * target * i / 1000)
     end
 end
