@@ -1,4 +1,4 @@
-load biasvar_020519_thres0_7_constant_stage0_750ms_optimized3_Krange1to7.mat
+load biasvar_021119_thres0_7_constant_stage0_750ms_Krange1to8_Irange77to79_sigma005to04.mat
 
 bias1 = collated_bias_var(:,1);
 biasmodel1 = collated_bias_var(:,2);

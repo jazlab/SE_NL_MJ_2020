@@ -1,28 +1,31 @@
-load IK_relationship_sigma_0-02_102918_1000trials.mat
+%load IK_relationship_sigma_0-02_102918_1000trials.mat
+load IK_grid_020919_1000trialsB.mat
 mselst1 = MSELST;
+%mselst1 = MSELST;
 
-load mselst_grid_sigma0-05.mat
-mselst2 = MSELST;
+% load mselst_grid_sigma0-05.mat
+% mselst2 = MSELST;
 
 %mselst1 = log(mselst1);
 normmse1 = squeeze(mselst1(1,:,:))./ max(mselst1(:));
+surf(normmse1);
 
-normmse2 = squeeze(mselst2(1,:,:));
-normmse2 = normmse2 / max(normmse2(:));
-%normmse2(11,1) = nan;
-%normmse2 = log(normmse2) ./ max(log(mselst2(:)));
+% normmse2 = squeeze(mselst2(1,:,:));
+% normmse2 = normmse2 / max(normmse2(:));
+% normmse2(11,1) = nan;
+% normmse2 = log(normmse2) ./ max(log(mselst2(:)));
 
-surf(normmse2);
-xlabel('$I$', 'interpreter', 'latex');
-ylabel('$K$', 'interpreter', 'latex');
-zlabel('RMSE')
+% surf(normmse2);
+% xlabel('$I$', 'interpreter', 'latex');
+% ylabel('$K$', 'interpreter', 'latex');
+% zlabel('RMSE')
 
 
 %% Plot the heatmap
-normmse2 = imresize(normmse2, 10);
+%normmse2 = imresize(normmse2, 10);
 normmse1 = imresize(normmse1, 10);
 
-im = imshow(normmse1, 'InitialMagnification', 'fit', 'XData', [min(Klst), max(Klst)],...
+im = imshow(normmse1(10:end,:), 'InitialMagnification', 'fit', 'XData', [min(Klst), max(Klst)],...
     'YData', [min(Ilst), max(Ilst)]);
 
 % Make colorbar
@@ -35,7 +38,7 @@ set(c, 'Position', [0.847 0.3433 0.04 0.5805], 'FontSize', 12,...
 
 
 axis xy
-caxis([0.15, 1.0])
+%caxis([0.15, 1.0])
 %xlabel('$K$', 'interpreter', 'latex')
 %ylabel('$I$', 'interpreter', 'latex')
 
@@ -45,6 +48,7 @@ set(gca, 'Visible', 'on')
 axis square
 
 % Change x and yticks
+
 
 
 % Find the minimum point
@@ -58,7 +62,7 @@ plot([y0, y0], [min(Ilst), x0], 'w--');
 plot([min(Klst), y0], [x0, x0], 'w--');
 
 % Label optimal point
-text(2.3, 0.7853, '$(K^*, I_0^*)$', 'interpreter', 'latex',...
+text(y0 + 0.2, x0, '$(K^*, I_0^*)$', 'interpreter', 'latex',...
     'Color', 'w', 'FontSize', 20, 'FontWeight', 'bold')
 
 mymakeaxis('x_label', '$K$', 'y_label', '$I_0$', 'interpreter', 'latex',...

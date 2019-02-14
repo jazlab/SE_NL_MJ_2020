@@ -10,14 +10,15 @@ tstamps = double(1:nsteps) * double(dt) / 1000;
 orange = [255 204 0]/255;
 pink = projectColorMaps('ts','samples',2,'sampleDepth',2);
 blue = projectColorMaps('ts','samples',1,'sampleDepth',2);
+%figure('Name','Residual \sqrt{VAR}','Position',[200 296 800 372])
 
 f = figure;
-set(f, 'Position', [1 1 1000 600]);
+set(f, 'Position', [1 1 800 600]);
 
 l1 = subplot(4,2,1);
-h1 = plot(tstamps, ulst(:,1:10), 'Color',blue,...
+h1 = plot(tstamps, ulst(:,1:100), 'Color',blue,...
     'LineWidth',2.0);
-for i = 1:10
+for i = 1:100
     h1(i).Color(4) = 0.1;
 end
 
@@ -38,9 +39,9 @@ set(title_handle,'FontSize',16);
 
 
 l2 = subplot(4,2,3);
-h2 = plot(tstamps, vlst(:,1:10), 'Color', blue,...
+h2 = plot(tstamps, vlst(:,1:100), 'Color', blue,...
     'LineWidth',2.0);
-for i = 1:10
+for i = 1:100
     h2(i).Color(4) = 0.1;
 end
 xlim([0, 4.2])
@@ -50,9 +51,9 @@ plotFlashes(dt, duration/10, 3)
 mymakeaxis(gca,'y_label', '$v$', 'interpreter', 'latex', 'yticks', [0.2, 0.4])
 
 l3 = subplot(4,2,5);
-h3 = plot(tstamps, ylst(:,1:10), 'Color',blue,...
+h3 = plot(tstamps, ylst(:,1:100), 'Color',blue,...
     'LineWidth',2.0);
-for i = 1:10
+for i = 1:100
     h3(i).Color(4) = 0.1;
 end
 xlim([0, 4.2])
@@ -67,9 +68,9 @@ text(3,0.75,txt,'interpreter', 'latex', 'FontSize', 16)
 
 
 l4 = subplot(4,2,7);
-h4 = plot(tstamps, Ilst(:,1:10), 'Color',blue,...
+h4 = plot(tstamps, Ilst(:,1:100), 'Color',blue,...
     'LineWidth',2.0);
-for i = 1:10
+for i = 1:100
     h4(i).Color(4) = 0.1;
 end
 xlim([0, 4.2])
@@ -99,9 +100,9 @@ duration = double(duration);
 tstamps = double(1:nsteps) * double(dt) / 1000;
 
 r1 = subplot(4,2,2);
-h1 = plot(tstamps, ulst(:,1:10), 'Color',pink,...
+h1 = plot(tstamps, ulst(:,1:100), 'Color',pink,...
     'LineWidth',2.0);
-for i = 1:10
+for i = 1:100
     h1(i).Color(4) = 0.1;
 end
 
@@ -121,9 +122,9 @@ set(title_handle2,'FontSize',16);
 
 
 r2 = subplot(4,2,4);
-h2 = plot(tstamps, vlst(:,1:10), 'Color',pink,...
+h2 = plot(tstamps, vlst(:,1:100), 'Color',pink,...
     'LineWidth',2.0);
-for i = 1:10
+for i = 1:100
     h2(i).Color(4) = 0.1;
 end
 xlim([0, 4.2])
@@ -133,9 +134,9 @@ plotFlashes(dt, duration/10, 5)
 mymakeaxis(gca,'y_label', '$v$', 'interpreter', 'latex', 'yticks', [0.2, 0.4])
 
 r3 = subplot(4,2,6);
-h3 = plot(tstamps, ylst(:,1:10), 'Color',pink,...
+h3 = plot(tstamps, ylst(:,1:100), 'Color',pink,...
     'LineWidth',2.0);
-for i = 1:10
+for i = 1:100
     h3(i).Color(4) = 0.1;
 end
 xlim([0, 4.2])
@@ -148,9 +149,9 @@ txt = '$y_0$';
 text(3.4,0.75,txt, 'interpreter', 'latex', 'FontSize', 16)
 
 r4 = subplot(4,2,8);
-h4 = plot(tstamps, Ilst(:,1:10), 'Color',pink,...
+h4 = plot(tstamps, Ilst(:,1:100), 'Color',pink,...
     'LineWidth',2.0);
-for i = 1:10
+for i = 1:100
     h4(i).Color(4) = 0.1;
 end
 xlim([0, 4.2])
@@ -181,6 +182,8 @@ linkaxes([l2 r2], 'x')
 linkaxes([l3 r3], 'x')
 linkaxes([l4 r4], 'x')
 
+print(gcf, '-painters', '-dpdf', 'Figures/uv-simulation_figure_021319.pdf')
+
 function plotFlashes(dt, target, nFlash)
     % First flash is at 750 ms
     plotVertical(750 / 1000)
@@ -191,3 +194,4 @@ function plotFlashes(dt, target, nFlash)
         plotVertical(0.75 + dt * target * i / 1000)
     end
 end
+
