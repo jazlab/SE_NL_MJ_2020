@@ -1,6 +1,6 @@
 close all;
 
-load GB_sim_results_021119_with_warmup.mat
+load SWE_sim_results_021119_with_warmup.mat
 
 figure('Position', [100, 200, 1000, 600]);
 h1 = subplot('121');
