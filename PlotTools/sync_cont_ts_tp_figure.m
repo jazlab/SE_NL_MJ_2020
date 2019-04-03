@@ -1,4 +1,4 @@
-load subject_ts_tp_sync_cont_021619.mat
+load subject_ts_tp_sync_cont_040319_20reps.mat
 
 figure('Position', [100, 200, 1000, 600]);
 
