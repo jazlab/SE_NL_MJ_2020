@@ -53,7 +53,7 @@ end
 if ~exist('xaxisOn','var'), xaxisOn = true; end
 if ~exist('yaxisOn','var'), yaxisOn = true; end
 
-if ~exist('font_name','var'), font_name = 'helvetica-narrow';, end
+if ~exist('font_name','var'), font_name = 'helvetica';, end
 if ~exist('font_size','var'), font_size = 16;, end
 if ~exist('font_angle','var'), font_angle = 'italic';, end
 if ~exist('interpreter','var'), interpreter = 'tex'; end
