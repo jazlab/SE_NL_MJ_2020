@@ -5,7 +5,7 @@ function StimulusJitterResponse(varargin)
 %%
 
 %% Defaults
-datafile_default = 'Synch_EventOnsetShift.mat';
+datafile_default = 'Synch_StimulusJitter.mat';
 
 
 %% Parse inputs

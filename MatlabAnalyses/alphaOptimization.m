@@ -5,7 +5,7 @@ function alphaOptimization(varargin)
 %%
 
 %% Defaults
-datafile_default = '~/Projects/TimingCircuit/Data/Synchronization_K_alpha.mat';
+datafile_default = 'Synchronization_K_alpha.mat';
 
 
 %% Parse inputs
