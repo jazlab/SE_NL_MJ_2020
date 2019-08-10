@@ -6,3 +6,6 @@ This is the code to implement the Circuit Model in "A neural circuit model for h
 - The full circuit model optimation of alpha and analysis of response to ISI perturbations is implemented in K_alpha_perturbations.ipynb; supplemental analyses of saved output is implemented in MATLAB using alphaOptimization.m, PeriodStepResponse.m, PhaseShiftResponse.m, and StimulusJitterResponse.m
 - The full circuit model, and simulations of the synchronization-continuation task are implemented in SynchronizationContinuation.ipynb
 
+System requirements: Python 3.5.4; JupyterLab 4.3.0; MATLAB R2017a
+Code has been tested with Python v3.5.4 and MATLAB R2017a.
+
