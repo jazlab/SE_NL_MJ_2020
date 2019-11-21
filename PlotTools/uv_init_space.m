@@ -15,18 +15,30 @@ figure;
 upos = find(uinit_lst == 0.7);
 vmeans = means(upos, :);
 vstds = stds(upos, :);
-l2 = errorbar(vinit_lst, vmeans * 10, vstds * 10, 'LineWidth', 2, 'Color', colors(5,:));
+l1 = errorbar(vinit_lst, vmeans * 10, vstds * 10, 'LineWidth', 2, 'Color', colors(5,:), ...
+    'Marker', 'o', 'LineStyle', 'none',...
+    'MarkerFaceColor', colors(5,:), 'MarkerSize', 4,...
+    'LineWidth', 1.5);
 hold on
+plot(vinit_lst, vmeans * 10, 'Color', colors(5,:));
+
 
 load uv_init_times_v_0to0.6_u_0.3to1.5_1000ms.mat
 upos = find(uinit_lst == 0.7);
 vmeans = means(upos, :);
 vstds = stds(upos, :);
-l2 = errorbar(vinit_lst, vmeans * 10, vstds * 10, 'LineWidth', 2, 'Color', colors(8,:));
+l2 = errorbar(vinit_lst, vmeans * 10, vstds * 10, 'LineWidth', 2, 'Color', colors(8,:),...
+    'Marker', 'o', 'LineStyle', 'none',...
+    'MarkerFaceColor', colors(8,:), 'MarkerSize', 4,...
+    'LineWidth', 1.5);
+
+plot(vinit_lst, vmeans * 10, 'Color', colors(8,:));
+
 
 mymakeaxis('x_label', '$v_0$', 'y_label', '$t_p$ (ms)', 'interpreter', 'latex',...
     'offsetRatio', 0, 'font_size', 20)
-legend([l2, l2], {'400 ms', '1000 ms'})
+legend([l1, l2], {'400 ms', '1000 ms'})
+
 
 %% Keeping v = 0.2, vary u
 load uv_init_times_v_0to0.6_u_0.3to1.5_400ms.mat
@@ -34,18 +46,27 @@ figure;
 vpos = find(abs(vinit_lst - 0.2) < 0.01);
 vmeans = means(:, vpos);
 vstds = stds(:, vpos);
-l2 = errorbar(uinit_lst, vmeans * 10, vstds * 10, 'LineWidth', 2, 'Color', colors(5,:));
+l1 = errorbar(uinit_lst, vmeans * 10, vstds * 10, 'LineWidth', 2, 'Color', colors(5,:), ...
+    'Marker', 'o', 'LineStyle', 'none',...
+    'MarkerFaceColor', colors(5,:), 'MarkerSize', 4,...
+    'LineWidth', 1.5);
 hold on
+plot(uinit_lst, vmeans * 10, 'Color', colors(5,:));
+
 
 load uv_init_times_v_0to0.6_u_0.3to1.5_1000ms.mat
 vpos = find(abs(vinit_lst - 0.2) < 0.01);
 vmeans = means(:, vpos);
 vstds = stds(:, vpos);
-l2 = errorbar(uinit_lst, vmeans * 10, vstds * 10, 'LineWidth', 2, 'Color', colors(8,:));
+l2 = errorbar(uinit_lst, vmeans * 10, vstds * 10, 'LineWidth', 2, 'Color', colors(8,:),...
+    'Marker', 'o', 'LineStyle', 'none',...
+    'MarkerFaceColor', colors(8,:), 'MarkerSize', 4,...
+    'LineWidth', 1.5);
 
+plot(uinit_lst, vmeans * 10, 'Color', colors(8,:));
 mymakeaxis('x_label', '$v_0$', 'y_label', '$t_p$ (ms)', 'interpreter', 'latex',...
     'offsetRatio', 0, 'font_size', 20)
-legend([l2, l2], {'400 ms', '1000 ms'})
+legend([l1, l2], {'400 ms', '1000 ms'})
 
 %% Vary both u and v, ts = 1000 ms
 load uv_init_times_v_0to0.6_u_0.3to1.5_fine_1000ms.mat
@@ -152,12 +173,19 @@ set(c, 'Position', [0.8 0.2859 0.04 0.643], 'FontSize', 16,...
 %% Dependence on initialization period
 load initialization_dependence_400ms.mat
 figure;
-l1 = errorbar(window_lst, means * 10, stds * 10, 'LineWidth', 2, 'Color', colors(5,:));
 hold on
+l1 = errorbar(window_lst, means * 10, stds * 10, 'LineWidth', 2, 'Color', colors(5,:),...
+    'Marker', 'o', 'LineStyle', 'none',...
+    'MarkerFaceColor', colors(5,:), 'MarkerSize', 4,...
+    'LineWidth', 1.5);
+plot(window_lst, means * 10, 'Color', colors(5,:));
 
 load initialization_dependence_1000ms.mat
-l2 = errorbar(window_lst, means * 10, stds * 10, 'LineWidth', 2, 'Color', colors(8,:));
-hold on
+l2 = errorbar(window_lst, means * 10, stds * 10, 'LineWidth', 2, 'Color', colors(8,:),...
+    'Marker', 'o', 'LineStyle', 'none',...
+    'MarkerFaceColor', colors(8,:), 'MarkerSize', 4,...
+    'LineWidth', 1.5);
+plot(window_lst, means * 10, 'Color', colors(8,:));
 
 mymakeaxis('x_label', 'Initialization period (ms)', 'y_label', '$t_p$ (ms)', 'interpreter', 'latex',...
     'offsetRatio', 0, 'font_size', 20)
