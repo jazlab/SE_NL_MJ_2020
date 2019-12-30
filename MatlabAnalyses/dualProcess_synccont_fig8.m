@@ -1,3 +1,12 @@
+%% Define folder to use
+global folder
+switch getenv('computername')
+    case 'DESKTOP-FN1P6HD'
+        folder = 'C:\Users\Sur lab\Dropbox (MIT)\Jazayeri\SyncContData';
+    otherwise
+        folder = 'C:\Users\Le\Dropbox (MIT)\Jazayeri\SyncContData';
+end
+
 %% Fit all behavioral files
 nsamples = 100;
 ntrials = 100;
@@ -9,7 +18,7 @@ sigma_low = 0;
 sigma_high = 100;
 niter = 10;
 
-folder = 'C:\Users\Le\Dropbox (MIT)\Jazayeri\SyncContData';
+%folder = 'C:\Users\Le\Dropbox (MIT)\Jazayeri\SyncContData';
 all_subject_files = {'AL_2_20170719_SynCon_ITIs.mat',...
     'ER_2_20170718_SynCon_ITIs.mat',...
     'FK_2_20170721_SynCon_ITIs.mat',...
@@ -71,7 +80,7 @@ for i = 1:numel(all_subject_files)
     alpha = params_opt_all_subjects(i, 3);
 
     % Calculate the target
-    folder = 'C:\Users\Le\Dropbox (MIT)\Jazayeri\SyncContData';
+%     folder = 'C:\Users\Le\Dropbox (MIT)\Jazayeri\SyncContData';
     filename = all_subject_files{i};
     load(fullfile(folder, filename), 'allDur_mean', 'durs');
     IPIs_all = cell2mat(allDur_mean');
@@ -124,6 +133,7 @@ errorbar(durs, mean(IPI_sevenths), std(IPI_sevenths))
 %     'model_biases');
 
 function mse = find_error(params, filename)
+global folder
 IPI0 = params(1);
 Beta = params(2);
 alpha = params(3);
@@ -134,7 +144,7 @@ ntrials = 100;
 tmax = 20;
 
 % Calculate the target
-folder = 'C:\Users\Le\Dropbox (MIT)\Jazayeri\SyncContData';
+% folder = 'C:\Users\Le\Dropbox (MIT)\Jazayeri\SyncContData';
 load(fullfile(folder, filename), 'allDur_mean', 'durs');
 IPIs_all = cell2mat(allDur_mean');
 IPIs_all = IPIs_all(:, 1:tmax);

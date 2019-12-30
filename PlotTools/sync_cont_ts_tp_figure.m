@@ -1,8 +1,10 @@
 load subject_ts_tp_sync_cont_040319_20reps.mat
+%load dualProcess_ts_tp_sync_cont_191230_20reps.mat
+load dualProcess_ts_tp_sync_cont_191230_tstpfitting_20reps.mat
 
 figure('Position', [100, 200, 1000, 600]);
 
-subject_id = 5;
+subject_id = 1;
 durs = durs * 1000;
 
 color_sync_mean = [188,95,211]/255;

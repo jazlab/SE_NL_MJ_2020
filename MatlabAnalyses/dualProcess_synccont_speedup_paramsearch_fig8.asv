@@ -9,7 +9,7 @@ switch getenv('computername')
 end
 %% Fit all behavioral files
 nsamples = 100;
-ntrials = 100;
+ntrials = 1000;
 Klow = 0;
 Khigh = 3;
 Ilow = 700;
@@ -74,11 +74,22 @@ all_subject_files = {'AL_2_20170719_SynCon_ITIs.mat',...
     'RC_2_20170721_SynCon_ITIs.mat'};
 
 params_all_subjects = nan(numel(all_subject_files), numel(params));
+nsamples = 1000;
+Ilow = 600;
+Ihigh = 1200;
+Blow = 0;
+Bhigh = 2;
+alow = 0;
+ahigh = 1;
+slow = 0;
+shigh = 100;
+
 for i = 1:6
     fprintf('Fitting subject %d of %d\n', i, numel(all_subject_files));
     filename = all_subject_files{i};
-    x = fminsearch(@(x) find_error(x, filename), params, options);
-    params_all_subjects(i,:) = x;
+    [Iopt, Bopt, aopt, sopt] = do_fitting(filename, nsamples,...
+        Ilow, Ihigh, Blow, Bhigh, alow, ahigh, slow, shigh);
+    params_all_subjects(i,:) = [Iopt, Bopt, aopt, sopt];
 end
 
 %x = [650, 0.8, 0.7];
@@ -93,10 +104,10 @@ model_biases = nan(numel(all_subject_files), tmax);
 IPIs_all_allsubjects = cell(1, numel(all_subject_files));
 
 for i = 1:6
-    IPI0 = 600;%params_all_subjects(i, 1);
-    Beta = 1.0; %params_all_subjects(i, 2);
-    alpha = 0.36;%params_all_subjects(i, 3);
-    speedup = 84;%params_all_subjects(i, 4);
+    IPI0 = params_all_subjects(i, 1);
+    Beta = params_all_subjects(i, 2);
+    alpha = params_all_subjects(i, 3);
+    speedup = params_all_subjects(i, 4);
     sigma = 50;
     nSteps = 3;
     ncont = 17;
@@ -135,13 +146,13 @@ subplot(121);
 plot(mean(model_biases), 'r');
 
 %% Save
-save('dualProcess_synccont_withspeedup_params_191229.mat', 'params_all_subjects',...
-    'all_subject_files', 'sigma', 'nSteps', 'ncont', 'tmax', 'ntrials', 'target_biases',...
-    'model_biases', 'durs');
+% save('dualProcess_synccont_withspeedup_randomsearch_params_191229.mat', 'params_all_subjects',...
+%     'all_subject_files', 'sigma', 'nSteps', 'ncont', 'tmax', 'ntrials', 'target_biases',...
+%     'model_biases', 'durs');
 
 %% Fig. 8c
-load dualProcess_synccont_withspeedup_params_191229.mat
-subject_id = 6;
+load dualProcess_synccont_withspeedup_randomsearch_params_191229.mat
+subject_id = 1;
 IPI0 = params_all_subjects(subject_id, 1);
 Beta = params_all_subjects(subject_id, 2);
 alpha = params_all_subjects(subject_id, 3);
@@ -162,6 +173,58 @@ end
 errorbar(durs, mean(IPI_thirds), std(IPI_thirds))
 hold on
 errorbar(durs, mean(IPI_sevenths), std(IPI_sevenths))
+
+
+%% For saving
+load dualProcess_synccont_withspeedup_randomsearch_params_191229.mat
+meanITI_model = nan(numel(all_subject_files), numel(durs), tmax);
+stdITI_model = nan(numel(all_subject_files), numel(durs), tmax);
+
+for subject_id = 1:6
+    fprintf('Simulating subject %d\n', subject_id);
+    IPI0 = params_all_subjects(subject_id, 1);
+    Beta = params_all_subjects(subject_id, 2);
+    alpha = params_all_subjects(subject_id, 3);
+    speedup = params_all_subjects(subject_id, 4);
+
+    for i = 1:numel(durs)
+        ISIs = ones(1, nSteps + 1) * durs(i) * 1000;
+        IPI_lst =  dualProcessNoiseMultiple(IPI0,Beta,alpha,nSteps,ncont,...
+                ISIs, sigma, speedup, ntrials);
+        meanITI_model(subject_id, i, :) = mean(IPI_lst(2:end,:),2);
+        stdITI_model(subject_id, i, :) = std(IPI_lst(2:end,:), [], 2);
+    end
+end
+
+%save('dualProcess_ts_tp_sync_cont_191230_20reps.mat', 'meanITI_model', 'stdITI_model');
+%%
+find_error_tstp([1000 1 1 50], all_subject_files, 2)
+
+function [Iopt, Bopt, aopt, sopt] = do_fitting(filename, nsamples,...
+    Ilow, Ihigh, Blow, Bhigh, alow, ahigh, slow, shigh)
+% Performs fitting by a random search
+Ilst = randrange(Ilow, Ihigh, [nsamples 1]);
+Blst = randrange(Blow, Bhigh, [nsamples 1]);
+alst = randrange(alow, ahigh, [nsamples 1]);
+slst = randrange(slow, shigh, [nsamples 1]);
+
+for i = 1:nsamples
+    Ival = Ilst(i);
+    Bval = Blst(i);
+    aval = alst(i);
+    sval = slst(i);
+    params = [Ival, Bval, aval, sval];
+    
+    errors(i) = find_error(params, filename);
+end
+
+Iopt = Ilst(errors == min(errors));
+Bopt = Blst(errors == min(errors));
+aopt = alst(errors == min(errors));
+sopt = slst(errors == min(errors));
+
+end
+
 
 
 function mse = find_error(params, filename)
@@ -192,6 +255,43 @@ mse = nanmean(sum(mean_bias - target').^2);
 
 end
 
+
+function mse = find_error_tstp(params, files, order)
+global folder
+
+filename = files{order};
+IPI0 = params(1);
+Beta = params(2);
+alpha = params(3);
+speedup = params(4);
+sigma = 50;
+nSteps = 3;
+ncont = 17;
+ntrials = 100;
+tmax = 20;
+
+% Calculate the target
+% folder = 'C:\Users\Le\Dropbox (MIT)\Jazayeri\SyncContData';
+load(fullfile(folder, filename), 'allDur_mean', 'durs');
+load('C:\Users\Sur lab\Documents\Noisy_mutual_inhibition\NoisyMutualInhibition\PlotTools\subject_ts_tp_sync_cont_040319_20reps.mat',...
+    'bias_arr_all');
+
+target_third = durs + squeeze(bias_arr_all(order, 3, :));
+target_seventh = durs + squeeze(bias_arr_all(order, 7, :));
+
+for i = 1:numel(durs)
+    ISIs = ones(1, nSteps + 1) * durs(i) * 1000;
+    IPI_lst =  dualProcessNoiseMultiple(IPI0,Beta,alpha,nSteps,ncont,...
+            ISIs, sigma, speedup, ntrials);
+    model_third(i) = mean(IPI_lst(4,:));
+    model_seventh(i) = mean(IPI_lst(8,:));
+    %stdITI_model(subject_id, i, :) = std(IPI_lst(2:end,:), [], 2);
+end
+
+diff = [target_third' target_seventh'] - [model_third model_seventh];
+mse = mean(diff.^2);
+
+end
 
 
 function mean_bias = simulateSyncCont(IPI0, Beta, alpha, nSteps, ncont, ...
