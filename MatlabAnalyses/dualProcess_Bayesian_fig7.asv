@@ -1,25 +1,20 @@
-switch getenv('computername')
-    case 'LMN'
-        directory = 'C:\Users\Le\Dropbox (MIT)\Jazayeri\NoisyMutualInhibition';
-    otherwise
-        directory = 'C:\Users\Sur lab\Documents\Noisy_mutual_inhibition\NoisyMutualInhibition\';
-end
+directory = 'C:\Users\Sur lab\Documents\Noisy_mutual_inhibition\NoisyMutualInhibition\';
+
 
 %% Plot and compare
-
-id = 3;
-IPI0 = Iopt;%Iopt_lst(id);
-Beta = Kopt;%Kopt_lst(id);
-sigma = sigma_opt;%sigma_opt_lst(id);
-behav_file = fullfile(directory, all_subject_files{id});
-load(behav_file, 'tss', 'mtp_in', 'stdtp_in');
 ISIs = tss;
+id = 3;
+IPI0 = Iopt_lst(id);
+Beta = Kopt_lst(id);
+sigma = sigma_opt_lst(id);
+behav_file = fullfile('C:\Users\Sur lab\Documents\Noisy_mutual_inhibition\NoisyMutualInhibition\', all_subject_files{id});
+load(behav_file, 'tss', 'mtp_in', 'stdtp_in');
 
 ntrials = 100;
 RSG_productions = simulateRSG(IPI0,Beta,2,ISIs, sigma, ntrials);
 RSSG_productions = simulateRSG(IPI0,Beta,3,ISIs, sigma, ntrials);
 
-figure('Position', [100, 200, 800, 600]);
+figure('Position', [100, 200, 1000, 600]);
 h1 = subplot('121');
 errorbar(tss, mtp_in(:,1), stdtp_in(:,1),...
     'r', 'Marker', 'o', 'LineStyle', 'none',...
@@ -101,7 +96,7 @@ Kopt_lst = [];
 sigma_opt_lst = [];
 for i = 1:numel(all_subject_files)
     fprintf('Fitting subject: %s...\n', all_subject_files{i});
-    behav_file = fullfile(directory,...
+    behav_file = fullfile('C:\Users\Sur lab\Documents\Noisy_mutual_inhibition\NoisyMutualInhibition\',...
         all_subject_files{i});
     [Iopt, Kopt, sigma_opt] = subject_fitting(behav_file, nsamples, ntrials, Klow, Khigh, Ilow, Ihigh,...
     sigma_low, sigma_high, niter);
@@ -113,7 +108,7 @@ end
 %% Subject and model BIAS and VAR
 collated_bias_var = [];
 for i = 1:numel(all_subject_files)
-    behav_file = fullfile(directory,...
+    behav_file = fullfile('C:\Users\Sur lab\Documents\Noisy_mutual_inhibition\NoisyMutualInhibition\',...
         all_subject_files{i});
     load(behav_file, 'tss', 'mtp_in', 'stdtp_in');
     Ival = Iopt_lst(i);
@@ -150,8 +145,7 @@ save('biasvar_dualProcess_191219.mat', 'collated_bias_var', 'all_subject_files')
 
 
 %% Fit one example file
-behav_file = fullfile(directory, 'GB_EKF_ObsAct0_20171105.mat');
-rng(123);
+behav_file = 'C:\Users\Sur lab\Documents\Noisy_mutual_inhibition\NoisyMutualInhibition\SWE_EKF_ObsAct0_20171105.mat';
 nsamples = 100;
 ntrials = 100;
 Klow = 0;
@@ -196,7 +190,7 @@ all_subject_files = {'SWE_EKF_ObsAct0_20171105.mat', 'CV_EKF_ObsAct0_20171105.ma
                     'PG_EKF_ObsAct0_20171105.mat', 'SM_EKF_ObsAct0_20171105.mat',...
                     'TA_EKF_ObsAct0_20171105.mat', 'VD_EKF_ObsAct0_20171105.mat',...
                     'VR_EKF_ObsAct0_20171105.mat'};
-behav_file = fullfile(directory, all_subject_files{1});
+behav_file = fullfile('C:\Users\Sur lab\Documents\Noisy_mutual_inhibition\NoisyMutualInhibition\', all_subject_files{1});
 load(behav_file, 'mtp_in', 'stdtp_in', 'tss');
 
 RSG_productions = simulateRSG(Ival,Kval,2,tss, sigma, ntrials);
@@ -314,8 +308,4 @@ for stepi = 2:nSteps
 end
 IPI = diff(t);
 
-end
-
-function lst = randrange(low, high, dim)
-    lst = rand(dim) * (high - low) + low;
 end
