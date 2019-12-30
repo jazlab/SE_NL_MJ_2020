@@ -98,30 +98,27 @@ for i = 1:numel(all_subject_files)
 end
 
 %% Fig. 8c
-subject_id = 6;
-IPI0 = params_opt_all_subjects(subject_id, 1);
-Beta = params_opt_all_subjects(subject_id, 2);
-alpha = params_opt_all_subjects(subject_id, 3);
+IPI0 = params_opt_all_subjects(i, 1);
+Beta = params_opt_all_subjects(i, 2);
+alpha = params_opt_all_subjects(i, 3);
 
 IPI_thirds = nan(ntrials, numel(durs));
 IPI_sevenths = nan(ntrials, numel(durs));
 
 for i = 1:numel(durs)
-    ISIs = ones(1, nSteps + 1) * durs(i) * 1000;
+    ISIs = ones(1, nSteps + 1) * durs(i);
     IPI_lst =  dualProcessNoiseMultiple(IPI0,Beta,alpha,nSteps,ncont,ISIs, sigma, ntrials);
     IPI_thirds(:,i) = IPI_lst(3,:);
     IPI_sevenths(:,i) = IPI_lst(7,:);
 end
 
 % Plot
-errorbar(durs, mean(IPI_thirds), std(IPI_thirds))
-hold on
-errorbar(durs, mean(IPI_sevenths), std(IPI_sevenths))
+errorbar(durs, IPI_thirds
 
 %% For saving
-% save('dualProcess_synccont_nospeedup_params_191229.mat', 'params_opt_all_subjects',...
-%     'all_subject_files', 'sigma', 'nSteps', 'ncont', 'tmax', 'ntrials', 'target_biases',...
-%     'model_biases');
+save('dualProcess_synccont_nospeedup_params_191229.mat', 'params_opt_all_subjects',...
+    'all_subject_files', 'sigma', 'nSteps', 'ncont', 'tmax', 'ntrials', 'target_biases',...
+    'model_biases');
 
 function mse = find_error(params, filename)
 IPI0 = params(1);

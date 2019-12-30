@@ -21,6 +21,7 @@ colors = [218 112 146;
 
 h1 = figure('Name','Two neuron','Position',[204 160 528 918]);
 h2 = figure('Name','Two neuron','Position',[204 160 999 918]);
+lines = {};
 for i = 1:length(I0s)
     %% Parameters
     u0 = u0s(i);
@@ -69,11 +70,13 @@ for i = 1:length(I0s)
     hold on
 %     plot(u(1:50:end),v(1:50:end),'.','Color',colors(i,:))
     ind = find(u-v > threshold);
-    plot(u(1:ind),v(1:ind),'.','Color',colors(i,:))
+    plot(u(1:ind),v(1:ind),'.','Color',colors(i,:));
+    
     plot(u(1),v(1),'ko','MarkerFaceColor',[1 1 1],'MarkerSize',7,'Color',colors(i,:))
     plot(u(end),v(end),'ko','MarkerFaceColor',colors(i,:),'MarkerSize',7,'Color','k')
     
-    plot(vvals,uvals(:,1),'Color',colors(i,:))
+    l = plot(vvals,uvals(:,1),'Color',colors(i,:));
+    lines{i} = l;
     plot(uvals(:,2),vvals,'--','Color',colors(i,:))
     
     ind = find(vvals == uvals(:,1));
@@ -89,7 +92,8 @@ for i = 1:length(I0s)
 
 
 end
-
+figure(h2)
+legend([lines{1} lines{2}], {'$I_0 = 0.3$', '$I_0 = 0.4$'}, 'Interpreter', 'latex')
 figure(h1)
 xlabel('Time')
 ylabel('x_1-x_2')

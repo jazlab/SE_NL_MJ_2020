@@ -1,4 +1,4 @@
-
+addpath('C:\Users\Le\Documents\MIT\Jazayeri\Seth_Noisy_Mutual_Inhibition\NoisyMutualInhibition\PlotTools')
 %% TwoNeuronDynamics
 %
 %   TwoNeuronDynamics()
@@ -19,8 +19,9 @@ colors = [218 112 146;
           218 112 146;
            65 185 235]/255;
 
-h1 = figure('Name','Two neuron','Position',[204 160 528 918]);
+%h1 = figure('Name','Two neuron','Position',[204 160 528 918]);
 h2 = figure('Name','Two neuron','Position',[204 160 999 918]);
+lines = {};
 for i = 1:length(I0s)
     %% Parameters
     u0 = u0s(i);
@@ -46,18 +47,7 @@ for i = 1:length(I0s)
     
     %% Plot
     %subplot(3,3,[1 4 7])
-    figure(h1)
-%     if i >= 3
-%         temp = u-v;
-%         plot(temp(abs(temp) < threshold),'Color',colors(i,:))
-        
-        temp = y;
-        plot(temp(abs(temp) < threshold),'Color',colors(i,:))
-        hold on
-        plotHorizontal(threshold);
-%     end
-%     plot(v,'--','Color',colors(i,:))
-    
+
     figure(h2)
     if i < 3
         subplot(1,2,1)
@@ -73,7 +63,8 @@ for i = 1:length(I0s)
     plot(u(1),v(1),'ko','MarkerFaceColor',[1 1 1],'MarkerSize',7,'Color',colors(i,:))
     plot(u(end),v(end),'ko','MarkerFaceColor',colors(i,:),'MarkerSize',7,'Color','k')
     
-    plot(vvals,uvals(:,1),'Color',colors(i,:))
+    l = plot(vvals,uvals(:,1),'Color',colors(i,:));
+    lines{i} = l;
     plot(uvals(:,2),vvals,'--','Color',colors(i,:))
     
     ind = find(vvals == uvals(:,1));
@@ -89,11 +80,9 @@ for i = 1:length(I0s)
 
 
 end
+figure(h2)
+legend([lines{1}, lines{2}], {'$I_0 = 1.1$', '$I_0 = 1.5$'}, 'Interpreter', 'latex');
 
-figure(h1)
-xlabel('Time')
-ylabel('x_1-x_2')
-mymakeaxis(gca,'yticks',[-1 0 1])
 
 %% Functions
 

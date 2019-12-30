@@ -182,6 +182,7 @@ set(thandle2,'FontSize',16);
 
 % xlab = xlabel('Time (ms)');
 % set(xlab, 'Position', [2,0.7,0]);
+print(gcf, '-painters', '-dpdf', 'uv-simulation-regime2.pdf')
 
 
 %% Link axes

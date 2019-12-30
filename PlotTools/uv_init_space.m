@@ -64,7 +64,7 @@ l2 = errorbar(uinit_lst, vmeans * 10, vstds * 10, 'LineWidth', 2, 'Color', color
     'LineWidth', 1.5);
 
 plot(uinit_lst, vmeans * 10, 'Color', colors(8,:));
-mymakeaxis('x_label', '$v_0$', 'y_label', '$t_p$ (ms)', 'interpreter', 'latex',...
+mymakeaxis('x_label', '$u_0$', 'y_label', '$t_p$ (ms)', 'interpreter', 'latex',...
     'offsetRatio', 0, 'font_size', 20)
 legend([l1, l2], {'400 ms', '1000 ms'})
 
@@ -78,7 +78,8 @@ im = imagesc(means * 10, 'YData', [min(uinit_lst), max(uinit_lst)],...
 colormap hot
 
 c = colorbar;
-c.Label.String = 't_p';
+c.Label.String = '$t_p$ (ms)';
+c.Label.Interpreter = 'latex';
 axis xy
 %caxis([20 60])
 caxis([800, 1200])
@@ -129,7 +130,8 @@ im = imagesc(means * 10, 'YData', [min(uinit_lst), max(uinit_lst)],...
 colormap hot
 
 c = colorbar;
-c.Label.String = 't_p';
+c.Label.String = '$t_p$ (ms)';
+c.Label.Interpreter = 'latex';
 axis xy
 caxis([200 600])
 %xlabel('$K$', 'interpreter', 'latex')
@@ -186,6 +188,7 @@ l2 = errorbar(window_lst, means * 10, stds * 10, 'LineWidth', 2, 'Color', colors
     'MarkerFaceColor', colors(8,:), 'MarkerSize', 4,...
     'LineWidth', 1.5);
 plot(window_lst, means * 10, 'Color', colors(8,:));
+plotVertical(750);
 
 mymakeaxis('x_label', 'Initialization period (ms)', 'y_label', '$t_p$ (ms)', 'interpreter', 'latex',...
     'offsetRatio', 0, 'font_size', 20)
