@@ -1,4 +1,4 @@
-load subject_ts_tp_sync_cont_011220.mat
+load subject_ts_tp_sync_cont_040319_20reps.mat
 
 %% Calculate the slope for each subject (observed)
 % Intervals for ts
@@ -6,13 +6,13 @@ durs = durs * 1000;
 color_sync_mean = [188,95,211]/255;
 color_cont_mean = [255,85,85]/255;
 
-%% Calculate slopes for model
+%% Calculate slopes for subjects
 
 % Corresponding tp
-tp_first_all = squeeze(meanITI_model(:,:,1));
-tp_second_all = squeeze(meanITI_model(:,:,2));
-tp_third_all = squeeze(meanITI_model(:,:,3));
-tp_seventh_all = squeeze(meanITI_model(:,:,7));
+tp_first_all = squeeze(bias_arr_all(:,1,:)) * 1000 + durs;
+tp_second_all = squeeze(bias_arr_all(:,2,:)) * 1000 + durs;
+tp_third_all = squeeze(bias_arr_all(:,3,:)) * 1000 + durs;
+tp_seventh_all = squeeze(bias_arr_all(:,7,:)) * 1000 + durs;
 
 % Calculate regression slope
 slopes_first = zeros(1, 6);
@@ -56,6 +56,7 @@ fprintf('P slope value is %.4f\n P shift value is %.4f\n', p_slope, p_shift);
 
 %% Plot slope and shift
 % Plot bias for all subjects
+figure;
 subplot(121);
 l1 = plot(ones(1, 6) * 0.9, slopes_third, 'o', 'MarkerFaceColor', color_sync_mean,...
     'MarkerEdgeColor', color_sync_mean);
@@ -121,7 +122,7 @@ xticks([1, 2, 3, 4])
 xticklabels([1, 2, 3, 7])
 
 %% Plot ts-tp for an example subject
-id = 3;
+id = 6;
 tp_first = tp_first_all(id,:);
 tp_second = tp_second_all(id,:);
 tp_third = tp_third_all(id, :);
@@ -136,4 +137,5 @@ l3 = plot(tp_third);
 l4 = plot(tp_seventh);
 
 legend([l1, l2, l3, l4], {'1st', '2nd', '3rd', '7th'})
+
 
