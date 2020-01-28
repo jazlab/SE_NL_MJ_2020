@@ -141,9 +141,12 @@ mybargraph(edges(2:end)-(edges(2)-edges(1)),n/sum(n),'barProperties',barProps)
 
 %% Phase histogram
 figure
-edges = -271:20:271;
-n = histcounts(alpha00.asynchLst(alpha00.isiLst~=0)./...
-    alpha00.isiLst(alpha00.isiLst~=0)*360,edges);
+edges = linspace(-271,271,60);%-271:20:271;
+phi = alpha00.asynchLst(alpha00.isiLst~=0)./...
+    alpha00.isiLst(alpha00.isiLst~=0)*360;
+phi(phi>180) = phi(phi>180) - 360;
+phi(phi<-180) = phi(phi<-180) + 360;
+n = histcounts(phi,edges);
 barProps.FaceColor = [1 0.5 0.5];
 barProps.EdgeColor = 'none';
 barProps.FaceAlpha = 0.5;
@@ -259,9 +262,12 @@ mybargraph(edges(2:end)-(edges(2)-edges(1)),n/sum(n),'barProperties',barProps)
 
 %% Relative Phase histogram
 figure
-edges = -271:20:271;
-n = histcounts(alpha00.asynchLst(alpha00.isiLst~=0)./...
-    alpha00.isiLst(alpha00.isiLst~=0)*360,edges);
+edges = linspace(-271,271,60);%-271:20:271;
+phi = alpha00.asynchLst(alpha00.isiLst~=0)./...
+    alpha00.isiLst(alpha00.isiLst~=0)*360;
+phi(phi>180) = phi(phi>180) - 360;
+phi(phi<-180) = phi(phi<-180) + 360;
+n = histcounts(phi,edges);
 barProps.FaceColor = [1 0.5 0.5];
 barProps.EdgeColor = 'none';
 barProps.FaceAlpha = 0.5;
@@ -269,8 +275,11 @@ hold on
 mybargraph(edges(2:end)-(edges(2)-edges(1)),n/sum(n),'barProperties',barProps)
 
 barProps.FaceColor = [0.5 0.5 1];
-n = histcounts(alpha01.asynchLst(alpha01.isiLst~=0)./...
-    alpha01.isiLst(alpha01.isiLst~=0)*360,edges);
+phi = alpha01.asynchLst(alpha01.isiLst~=0)./...
+    alpha01.isiLst(alpha01.isiLst~=0)*360;
+phi(phi>180) = phi(phi>180) - 360;
+phi(phi<-180) = phi(phi<-180) + 360;
+n = histcounts(phi,edges);
 mybargraph(edges(2:end)-(edges(2)-edges(1)),n/sum(n),'barProperties',barProps)
 axis([-270 270 0 0.19])
 plotVertical(0)
