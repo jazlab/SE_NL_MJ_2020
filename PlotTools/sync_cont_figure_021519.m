@@ -1,6 +1,16 @@
 load('sync_cont_figure_021619.mat', 'bias_all_lst', 'bias_means');
-load sync_cont_subject_fit_040319_5reps.mat
 
+% For circuit model
+%load ('sync_cont_subject_fit_040319_5reps.mat', 'Bias_sim_mean');
+
+% For dual process
+%load ('dualProcess_params_subjects_011620.mat', 'Bias_sim_mean');
+%load('dualProcess_synccont_withspeedup_randomsearch_params_011620.mat', 'Bias_sim_mean');
+% load ('dualProcess_params_subjects_tstp_011620.mat', 'Bias_sim_mean');
+% figure;
+
+% For algorithmic
+load ('sync_cont_figure_algorithmic_circuit_012120c.mat', 'Bias_sim_mean');
 figure;
 
 color_sync_mean = [188,95,211]/255;
@@ -38,7 +48,7 @@ h1 = plot(mean_sim, 'Color', 'k', 'LineWidth', 2);
 h2 = plot(bias_means(:,1:3), 'Color', color_sync_mean,...
     'LineWidth', 2);
 
-l1 = legend([h2, h3, h1], {'Human Synch.', 'Human Cont.', 'Circuit model'});
+l1 = legend([h2, h3, h1], {'Human Synch.', 'Human Cont.', 'Discrete algorithm model'});
 set(l1,...
     'Position',[0.770250001109825 0.400252140591297 0.101041664447015 0.110962563737191],...
     'FontSize',12,...

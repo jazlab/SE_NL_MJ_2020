@@ -1,6 +1,8 @@
-load subject_ts_tp_sync_cont_040319_20reps.mat
+load('subject_ts_tp_sync_cont_040319_20reps.mat', 'bias_arr_all');
+load 'subject_ts_tp_sync_cont_dualProcess_011620.mat'
+%load dualProcess_ts_tp_sync_cont_nospeedup_191230_tstpfitting_20reps.mat
 
-durs = durs * 1000;
+durs = durs' * 1000;
 figure('Position', [100, 200, 1000, 600]);
 
 color_sync_mean = [188,95,211]/255;
@@ -15,7 +17,7 @@ bias_fifthM_all = zeros(1, 6);
 %% Find subject bias
 for subject_id = 1:6
     bias_third = squeeze(bias_arr_all(subject_id, 1, :)) * 1000;
-    bias_fifth = squeeze(bias_arr_all(subject_id, 7, :)) * 1000;
+    bias_fifth = squeeze(bias_arr_all(subject_id, 3, :)) * 1000;
 
     bias_third = sqrt(sum(bias_third .^ 2) / 5);
     bias_fifth = sqrt(sum(bias_fifth .^ 2) / 5);
@@ -30,7 +32,7 @@ end
 %% Find model bias
 for subject_id = 1:6
     bias_thirdM = squeeze(meanITI_model(subject_id, :, 1)) - durs;
-    bias_fifthM = squeeze(meanITI_model(subject_id, :, 7)) - durs;
+    bias_fifthM = squeeze(meanITI_model(subject_id, :, 3)) - durs;
     
     bias_thirdM = sqrt(sum(bias_thirdM .^ 2) / 5);
     bias_fifthM = sqrt(sum(bias_fifthM .^ 2) / 5);

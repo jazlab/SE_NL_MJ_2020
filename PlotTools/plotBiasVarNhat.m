@@ -46,11 +46,11 @@ fh.Position = [0.1677 0.5067 0.6479 0.3992];
 
 N = 2;
 for n = 1:N
-    plot(BIAS(:,n),modelBIAS(:,n),'o','Color',PlotOpts.colors(n,:),'MarkerFaceColor',PlotOpts.colors(n,:))
+    plot(modelBIAS(:,n),BIAS(:,n),'o','Color',PlotOpts.colors(n,:),'MarkerFaceColor',PlotOpts.colors(n,:))
     hold on
 end
 for n = 1:N
-    plot(sqrtVAR(:,n),modelSqrVAR(:,n),'x','Color',PlotOpts.colors(n,:),...
+    plot(modelSqrVAR(:,n),sqrtVAR(:,n),'x','Color',PlotOpts.colors(n,:),...
         'MarkerSize', 10, 'MarkerFaceColor',PlotOpts.colors(n,:))
     hold on
 end
@@ -66,8 +66,8 @@ end
 % end
 axis square
 plotUnity;
-xlabel('Observed BIAS & VAR^{1/2} (ms)')
-ylabel('Model BIAS & VAR^{1/2} (ms)')
+xlabel('Discrete algorithm BIAS & VAR^{1/2} (ms)')
+ylabel('Human BIAS & VAR^{1/2} (ms)')
 xticks = 0:50:150;
 xticklabels = {'0','50','100','150'};
 yticks = xticks;

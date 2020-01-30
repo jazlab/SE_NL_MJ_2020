@@ -1,12 +1,12 @@
 load subject_ts_tp_sync_cont_040319_20reps.mat
-load subject_ts_tp_sync_cont_dualProcess_011620.mat %dualProcess_ts_tp_sync_cont_nospeedup_191230_tstpfitting_20reps.mat
+load subject_ts_tp_sync_cont_discreteAlgo_012220.mat %dualProcess_ts_tp_sync_cont_nospeedup_191230_tstpfitting_20reps.mat
 %load dualProcess_ts_tp_sync_cont_nospeedup_191230_tstpfitting_20reps.mat
 %load subject_ts_tp_sync_cont_dualProcess_011620_paramsearch.mat
 
 figure('Position', [100, 200, 1000, 600]);
 
-subject_id = 1;
-durs = durs' * 1000;
+subject_id = 5;
+durs = durs * 1000;
 
 color_sync_mean = [188,95,211]/255;
 color_cont_mean = [255,85,85]/255;

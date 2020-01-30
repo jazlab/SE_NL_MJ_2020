@@ -62,7 +62,7 @@ for i = 1:6
 end
 
                
-%% Parameter fitting for sync-cont using fminsearch
+%% Parameter fitting for sync-cont using parameter search
 params = [900, 0.8, 0.9, 50];
 rng(123);
 options = optimset('PlotFcns',@optimplotfval);
@@ -82,7 +82,7 @@ Bhigh = 2;
 alow = 0;
 ahigh = 1;
 slow = 0;
-shigh = 100;
+shigh = 0;
 
 for i = 1:6
     fprintf('Fitting subject %d of %d\n', i, numel(all_subject_files));
@@ -145,10 +145,12 @@ end
 subplot(121);
 plot(mean(model_biases), 'r');
 
+Bias_sim_mean = model_biases;
+
 %% Save
-% save('dualProcess_synccont_withspeedup_randomsearch_params_191229.mat', 'params_all_subjects',...
-%     'all_subject_files', 'sigma', 'nSteps', 'ncont', 'tmax', 'ntrials', 'target_biases',...
-%     'model_biases', 'durs');
+save('dualProcess_synccont_withspeedup_randomsearch_params_011620.mat', 'params_all_subjects',...
+    'all_subject_files', 'sigma', 'nSteps', 'ncont', 'tmax', 'ntrials', 'target_biases',...
+    'model_biases', 'durs', 'Bias_sim_mean');
 
 %% Fig. 8c
 load dualProcess_synccont_withspeedup_randomsearch_params_191229.mat

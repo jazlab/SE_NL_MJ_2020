@@ -100,9 +100,10 @@ ENV/
 # mypy
 .mypy_cache/
 
-# PDFs
+# Images
 *.pdf
 *.png
+*.svg
 
 # Data
 *.mat
