@@ -38,7 +38,10 @@ end
 
 
 %% Simulate and compare
-load dualProcess_params_subjects_011320.mat
+%load dualProcess_params_subjects_011620.mat
+load dualProcess_synccont_withspeedup_randomsearch_params_011620.mat
+%load dualProcess_synccont_nospeedup_randomsearch_tstp_params_191229.mat
+params_opt_all_subjects = params_all_subjects;
 figure;
 tmax = 20;
 target_biases = nan(numel(all_subject_files), tmax);
@@ -67,23 +70,40 @@ for i = 1:numel(all_subject_files)
     % Simulation
     mean_bias = simulateSyncCont(IPI0, Beta, alpha, nSteps, ncont, durs' * 1000, sigma, ntrials);
     mse = nanmean(sum(mean_bias - target').^2);
+    
+    %figure;
+    subplot(2,3,i)
+    l1 = plot(target, 'b');
+    hold on
+    l2 = plot(mean_bias, 'r');
+    ylabel('Bias (ms)')
+    xlabel('IPI')
+    ylim([0 200])
 
     % Plot
-    subplot(121)
-    plot(target);
-    ylim([0 300])
-    hold on
-    subplot(122);
-    plot(mean_bias);
-    ylim([0 300])
-    hold on
+%     subplot(121)
+%     plot(target);
+%     ylim([0 300])
+%     hold on
+%     subplot(122);
+%     plot(mean_bias);
+%     ylim([0 300])
+%     hold on
     
     target_biases(i,:) = target;
     model_biases(i,:) = mean_bias;
 end
 
+legend([l1 l2], {'Human', 'Dual process'})
+
+Bias_sim_mean = model_biases;
+
+save('dualProcess_params_subjects_tstp_011620.mat', 'all_subject_files', 'ncont',...
+    'nSteps', 'ntrials', 'params_opt_all_subjects', 'sigma', 'tmax',...
+    'Bias_sim_mean');
+
 %% Fig. 8c
-subject_id = 2;
+subject_id = 4;
 IPI0 = params_opt_all_subjects(subject_id, 1);
 Beta = params_opt_all_subjects(subject_id, 2);
 alpha = params_opt_all_subjects(subject_id, 3);
@@ -96,10 +116,13 @@ IPI_sevenths = nan(ntrials, numel(durs));
 for i = 1:numel(durs)
     ISIs = ones(1, nSteps + 1) * durs(i) * 1000;
     IPI_lst =  dualProcessNoiseMultiple(IPI0,Beta,alpha,nSteps,ncont,ISIs, sigma, ntrials);
-    IPI_firsts(:,i) = IPI_lst(4,:);
-    IPI_seconds(:,i) = IPI_lst(5,:);
-    IPI_thirds(:,i) = IPI_lst(6,:);
+    IPI_firsts(:,i) = IPI_lst(2,:);
+    IPI_seconds(:,i) = IPI_lst(3,:);
+    IPI_thirds(:,i) = IPI_lst(4,:);
     IPI_sevenths(:,i) = IPI_lst(8,:);
+    
+    
+    
 end
 
 % Plot
@@ -138,6 +161,14 @@ for subject_id = 1:6
     for i = 1:numel(durs)
         ISIs = ones(1, nSteps + 1) * durs(i) * 1000;
         IPI_lst =  dualProcessNoiseMultiple(IPI0,Beta,alpha,nSteps,ncont,ISIs, sigma, ntrials);
+        
+        meanITI = mean(IPI_lst, 2);
+        stdITI = std(IPI_lst, [], 2);
+
+        meanITI_model(subject_id, i, :) = meanITI(2:end);
+        stdITI_model(subject_id, i, :) = stdITI(2:end);
+        
+        
         IPI_firsts(:,i) = IPI_lst(2,:);
         IPI_seconds(:,i) = IPI_lst(3,:);
         IPI_thirds(:,i) = IPI_lst(4,:);
@@ -172,6 +203,9 @@ for subject_id = 1:6
     shift_seventh(subject_id) = tp_seventh(3);
     
 end
+
+save('subject_ts_tp_sync_cont_dualProcess_011620_paramsearch.mat', 'durs', 'meanITI_model',...
+    'stdITI_model');
 
 color_sync_mean = [188,95,211]/255;
 color_cont_mean = [255,85,85]/255;

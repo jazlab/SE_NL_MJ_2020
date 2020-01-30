@@ -131,11 +131,14 @@ for i = 1:6
     % Plot
     subplot(121)
     plot(target);
-    ylim([0 300])
+    ylim([0 200])
+    xlabel('IPI count (subjects)')
+    ylabel('BIAS (ms)')
     hold on
     subplot(122);
     plot(mean_bias);
-    ylim([0 300])
+    ylim([0 200])
+    xlabel('IPI count (model)')
     hold on
     
     target_biases(i,:) = target;
@@ -143,7 +146,8 @@ for i = 1:6
 end
 
 subplot(121);
-plot(mean(model_biases), 'r');
+l1 = plot(mean(model_biases), 'r');
+legend(l1, {'Model mean'})
 
 %% Save
 save('dualProcess_synccont_withspeedup_randomsearch_tstp_params_191229.mat', 'params_all_subjects',...
@@ -152,7 +156,7 @@ save('dualProcess_synccont_withspeedup_randomsearch_tstp_params_191229.mat', 'pa
 
 %% Fig. 8c
 load dualProcess_synccont_withspeedup_randomsearch_tstp_params_191229.mat
-subject_id = 6;
+subject_id = 1;
 IPI0 = params_all_subjects(subject_id, 1);
 Beta = params_all_subjects(subject_id, 2);
 alpha = params_all_subjects(subject_id, 3);
@@ -273,8 +277,15 @@ tmax = 20;
 % Calculate the target
 % folder = 'C:\Users\Le\Dropbox (MIT)\Jazayeri\SyncContData';
 load(fullfile(folder, filename), 'allDur_mean', 'durs');
-load('C:\Users\Sur lab\Documents\Noisy_mutual_inhibition\NoisyMutualInhibition\PlotTools\subject_ts_tp_sync_cont_040319_20reps.mat',...
-    'bias_arr_all');
+switch getenv('computername')
+    case 'LMN'
+        load('C:\Users\Le\Dropbox (MIT)\Jazayeri\NoisyMutualInhibition\PlotTools\subject_ts_tp_sync_cont_040319_20reps.mat',...
+            'bias_arr_all');
+    otherwise
+        load('C:\Users\Sur lab\Dropbox (MIT)\Jazayeri\NoisyMutualInhibition\PlotTools\subject_ts_tp_sync_cont_040319_20reps.mat',...
+            'bias_arr_all');
+end
+        
 
 target_third = durs + squeeze(bias_arr_all(order, 3, :));
 target_seventh = durs + squeeze(bias_arr_all(order, 7, :));
@@ -360,3 +371,4 @@ IPI = diff(t);
 
 
 end
+

@@ -1,8 +1,15 @@
 %IPI = dualProcessNoiseSyncCont(IPI0,Beta,alpha,nSteps,ncont,ISIs, sigma);
-
+%% Define folder to use
+global folder
+switch getenv('computername')
+    case 'DESKTOP-FN1P6HD'
+        folder = 'C:\Users\Sur lab\Dropbox (MIT)\Jazayeri\SyncContData';
+    otherwise
+        folder = 'C:\Users\Le\Dropbox (MIT)\Jazayeri\SyncContData';
+end
 %% Fit all behavioral files
 nsamples = 100;
-ntrials = 100;
+ntrials = 1000;
 Klow = 0;
 Khigh = 3;
 Ilow = 700;
@@ -11,7 +18,7 @@ sigma_low = 0;
 sigma_high = 100;
 niter = 10;
 
-folder = 'C:\Users\Le\Dropbox (MIT)\Jazayeri\SyncContData';
+% folder = 'C:\Users\Le\Dropbox (MIT)\Jazayeri\SyncContData';
 all_subject_files = {'AL_2_20170719_SynCon_ITIs.mat',...
     'ER_2_20170718_SynCon_ITIs.mat',...
     'FK_2_20170721_SynCon_ITIs.mat',...
@@ -57,6 +64,7 @@ end
                
 %% Parameter fitting for sync-cont using fminsearch
 params = [900, 0.8, 0.9, 50];
+rng(123);
 options = optimset('PlotFcns',@optimplotfval);
 all_subject_files = {'AL_2_20170719_SynCon_ITIs.mat',...
     'ER_2_20170718_SynCon_ITIs.mat',...
@@ -66,61 +74,36 @@ all_subject_files = {'AL_2_20170719_SynCon_ITIs.mat',...
     'RC_2_20170721_SynCon_ITIs.mat'};
 
 params_all_subjects = nan(numel(all_subject_files), numel(params));
+nsamples = 1000;
+Ilow = 600;
+Ihigh = 1200;
+Blow = 0;
+Bhigh = 2;
+alow = 0;
+ahigh = 1;
+slow = 0;
+shigh = 0;
+
 for i = 1:6
     fprintf('Fitting subject %d of %d\n', i, numel(all_subject_files));
     filename = all_subject_files{i};
-    x = fminsearch(@(x) find_error(x, filename), params, options);
-    params_all_subjects(i,:) = x;
+    [Iopt, Bopt, aopt, sopt] = do_fitting(all_subject_files, i, nsamples,...
+        Ilow, Ihigh, Blow, Bhigh, alow, ahigh, slow, shigh);
+    params_all_subjects(i,:) = [Iopt, Bopt, aopt, sopt];
 end
 
 %x = [650, 0.8, 0.7];
 %x = [650    0.7320    0.9489];
 
+
 %% Simulate and compare
 figure;
-
-target_biases = nan(numel(all_subject_files), tmax);
-model_biases = nan(numel(all_subject_files), tmax);
-
-for i = 1:numel(all_subject_files)
-    IPI0 = params_all_subjects(i, 1);
-    Beta = params_all_subjects(i, 2);
-    alpha = params_all_subjects(i, 3);
-    speedup = params_all_subjects(i, 4);
-
-    % Calculate the target
-    folder = 'C:\Users\Le\Dropbox (MIT)\Jazayeri\SyncContData';
-    filename = all_subject_files{i};
-    load(fullfile(folder, filename), 'allDur_mean', 'durs');
-    IPIs_all = cell2mat(allDur_mean');
-    IPIs_all = IPIs_all(:, 1:tmax);
-    bias = IPIs_all - durs;
-    target = sqrt(nanmean(bias.^2)) * 1000;
-
-    % Simulation
-    mean_bias = simulateSyncCont(IPI0, Beta, alpha, nSteps, ncont, durs' * 1000, sigma, ntrials);
-    mse = nanmean(sum(mean_bias - target').^2);
-
-    % Plot
-    subplot(121)
-    plot(target);
-    ylim([0 300])
-    hold on
-    subplot(122);
-    plot(mean_bias);
-    ylim([0 300])
-    hold on
-    
-    target_biases(i,:) = target;
-    model_biases(i,:) = mean_bias;
-end
-%% Simulate and compare
-figure;
+tmax = 20;
 target_biases = nan(numel(all_subject_files), tmax);
 model_biases = nan(numel(all_subject_files), tmax);
 IPIs_all_allsubjects = cell(1, numel(all_subject_files));
 
-for i = 1:numel(all_subject_files)
+for i = 1:6
     IPI0 = params_all_subjects(i, 1);
     Beta = params_all_subjects(i, 2);
     alpha = params_all_subjects(i, 3);
@@ -132,7 +115,7 @@ for i = 1:numel(all_subject_files)
     tmax = 20;
 
     % Calculate the target
-    folder = 'C:\Users\Le\Dropbox (MIT)\Jazayeri\SyncContData';
+%     folder = 'C:\Users\Le\Dropbox (MIT)\Jazayeri\SyncContData';
     load(fullfile(folder, all_subject_files{i}), 'allDur_mean', 'durs');
     IPIs_all = cell2mat(allDur_mean');
     IPIs_all = IPIs_all(:, 1:tmax);
@@ -148,11 +131,14 @@ for i = 1:numel(all_subject_files)
     % Plot
     subplot(121)
     plot(target);
-    ylim([0 300])
+    ylim([0 200])
+    xlabel('IPI count (subjects)')
+    ylabel('BIAS (ms)')
     hold on
     subplot(122);
     plot(mean_bias);
-    ylim([0 300])
+    ylim([0 200])
+    xlabel('IPI count (model)')
     hold on
     
     target_biases(i,:) = target;
@@ -160,37 +146,101 @@ for i = 1:numel(all_subject_files)
 end
 
 subplot(121);
-plot(mean(model_biases), 'r');
+l1 = plot(mean(model_biases), 'r');
+legend(l1, {'Model mean'})
 
 %% Save
-save('dualProcess_synccont_withspeedup_params_191229.mat', 'params_all_subjects',...
+save('dualProcess_synccont_withspeedup_randomsearch_tstp_params_191229.mat', 'params_all_subjects',...
     'all_subject_files', 'sigma', 'nSteps', 'ncont', 'tmax', 'ntrials', 'target_biases',...
-    'model_biases');
+    'model_biases', 'durs');
 
 %% Fig. 8c
-subject_id = 6;
-IPI0 = params_all_subjects(i, 1);
-Beta = params_all_subjects(i, 2);
-alpha = params_all_subjects(i, 3);
-speedup = params_all_subjects(i, 4);
+%load dualProcess_synccont_withspeedup_randomsearch_tstp_params_191229.mat
+subject_id = 5;
+IPI0 = params_all_subjects(subject_id, 1);
+Beta = params_all_subjects(subject_id, 2);
+alpha = params_all_subjects(subject_id, 3);
+speedup = params_all_subjects(subject_id, 4);
 
 IPI_thirds = nan(ntrials, numel(durs));
 IPI_sevenths = nan(ntrials, numel(durs));
 
 for i = 1:numel(durs)
-    ISIs = ones(1, nSteps + 1) * durs(i);
-    IPI_lst =  dualProcessNoiseMultiple(IPI0,Beta,alpha,nSteps,ncont,ISIs, sigma, ntrials);
+    ISIs = ones(1, nSteps + 1) * durs(i) * 1000;
+    IPI_lst =  dualProcessNoiseMultiple(IPI0,Beta,alpha,nSteps,ncont,...
+            ISIs, sigma, speedup, ntrials);
+    IPI_firsts(:,i) = IPI_lst(1,:);
+    IPI_seconds(:,i) = IPI_lst(2,:);
     IPI_thirds(:,i) = IPI_lst(3,:);
+    IPI_fourths(:,i) = IPI_lst(4,:);
     IPI_sevenths(:,i) = IPI_lst(7,:);
 end
 
 % Plot
-errorbar(durs, mean(IPI_thirds), std(IPI_thirds))
+l1 = errorbar(durs, mean(IPI_thirds), std(IPI_thirds));
 hold on
-errorbar(durs, mean(IPI_sevenths), std(IPI_sevenths))
+l2 = errorbar(durs, mean(IPI_firsts), std(IPI_firsts));
+l3 = errorbar(durs, mean(IPI_seconds), std(IPI_seconds));
+l4 = errorbar(durs, mean(IPI_fourths), std(IPI_fourths));
+legend([l1, l2, l3, l4], {'1st', '2nd', '3rd', '4th'})
+
+xlabel('ISI (s)')
+ylabel('IPI (ms)')
+
+%% For saving
+%load dualProcess_synccont_withspeedup_randomsearch_params_191229.mat
+meanITI_model = nan(numel(all_subject_files), numel(durs), tmax);
+stdITI_model = nan(numel(all_subject_files), numel(durs), tmax);
+
+for subject_id = 1:6
+    fprintf('Simulating subject %d\n', subject_id);
+    IPI0 = params_all_subjects(subject_id, 1);
+    Beta = params_all_subjects(subject_id, 2);
+    alpha = params_all_subjects(subject_id, 3);
+    speedup = params_all_subjects(subject_id, 4);
+
+    for i = 1:numel(durs)
+        ISIs = ones(1, nSteps + 1) * durs(i) * 1000;
+        IPI_lst =  dualProcessNoiseMultiple(IPI0,Beta,alpha,nSteps,ncont,...
+                ISIs, sigma, speedup, ntrials);
+        meanITI_model(subject_id, i, :) = mean(IPI_lst(2:end,:),2);
+        stdITI_model(subject_id, i, :) = std(IPI_lst(2:end,:), [], 2);
+    end
+end
+
+save('dualProcess_ts_tp_sync_cont_191230_tstpfitting_20reps.mat', 'meanITI_model', 'stdITI_model');
+%%
+find_error_tstp([1000 1 1 50], all_subject_files, 2)
+
+function [Iopt, Bopt, aopt, sopt] = do_fitting(files, order, nsamples,...
+    Ilow, Ihigh, Blow, Bhigh, alow, ahigh, slow, shigh)
+% Performs fitting by a random search
+Ilst = randrange(Ilow, Ihigh, [nsamples 1]);
+Blst = randrange(Blow, Bhigh, [nsamples 1]);
+alst = randrange(alow, ahigh, [nsamples 1]);
+slst = randrange(slow, shigh, [nsamples 1]);
+
+for i = 1:nsamples
+    Ival = Ilst(i);
+    Bval = Blst(i);
+    aval = alst(i);
+    sval = slst(i);
+    params = [Ival, Bval, aval, sval];
+    
+    errors(i) = find_error_tstp(params, files, order);
+end
+
+Iopt = Ilst(errors == min(errors));
+Bopt = Blst(errors == min(errors));
+aopt = alst(errors == min(errors));
+sopt = slst(errors == min(errors));
+
+end
+
 
 
 function mse = find_error(params, filename)
+global folder
 IPI0 = params(1);
 Beta = params(2);
 alpha = params(3);
@@ -203,7 +253,7 @@ tmax = 20;
 
 
 % Calculate the target
-folder = 'C:\Users\Le\Dropbox (MIT)\Jazayeri\SyncContData';
+% folder = 'C:\Users\Le\Dropbox (MIT)\Jazayeri\SyncContData';
 load(fullfile(folder, filename), 'allDur_mean', 'durs');
 IPIs_all = cell2mat(allDur_mean');
 IPIs_all = IPIs_all(:, 1:tmax);
@@ -217,6 +267,50 @@ mse = nanmean(sum(mean_bias - target').^2);
 
 end
 
+
+function mse = find_error_tstp(params, files, order)
+global folder
+
+filename = files{order};
+IPI0 = params(1);
+Beta = params(2);
+alpha = params(3);
+speedup = params(4);
+sigma = 50;
+nSteps = 3;
+ncont = 17;
+ntrials = 100;
+tmax = 20;
+
+% Calculate the target
+% folder = 'C:\Users\Le\Dropbox (MIT)\Jazayeri\SyncContData';
+load(fullfile(folder, filename), 'allDur_mean', 'durs');
+switch getenv('computername')
+    case 'LMN'
+        load('C:\Users\Le\Dropbox (MIT)\Jazayeri\NoisyMutualInhibition\PlotTools\subject_ts_tp_sync_cont_040319_20reps.mat',...
+            'bias_arr_all');
+    otherwise
+        load('C:\Users\Sur lab\Dropbox (MIT)\Jazayeri\NoisyMutualInhibition\PlotTools\subject_ts_tp_sync_cont_040319_20reps.mat',...
+            'bias_arr_all');
+end
+        
+
+target_third = durs + squeeze(bias_arr_all(order, 3, :));
+target_seventh = durs + squeeze(bias_arr_all(order, 7, :));
+
+for i = 1:numel(durs)
+    ISIs = ones(1, nSteps + 1) * durs(i) * 1000;
+    IPI_lst =  dualProcessNoiseMultiple(IPI0,Beta,alpha,nSteps,ncont,...
+            ISIs, sigma, speedup, ntrials);
+    model_third(i) = mean(IPI_lst(4,:));
+    model_seventh(i) = mean(IPI_lst(8,:));
+    %stdITI_model(subject_id, i, :) = std(IPI_lst(2:end,:), [], 2);
+end
+
+diff = [target_third' target_seventh'] - [model_third model_seventh] / 1000;
+mse = mean(diff.^2);
+
+end
 
 
 function mean_bias = simulateSyncCont(IPI0, Beta, alpha, nSteps, ncont, ...
@@ -272,6 +366,7 @@ for stepi = 2:nSteps
     T(stepi) = T(stepi-1) - Beta*(T(stepi-1)-ISIs(stepi-1));
     %fprintf('Told = %.4f, ISI = %.4f, Tnew = %.4f\n', T(stepi-1), ISIs(stepi-1), T(stepi));
     noise = randn() * sigma;
+    
     t(stepi+1) = t(stepi) + T(stepi) - alpha * a(stepi) + noise;
 end
 
@@ -285,3 +380,4 @@ IPI = diff(t);
 
 
 end
+
