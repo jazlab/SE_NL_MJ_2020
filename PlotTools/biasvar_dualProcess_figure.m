@@ -1,14 +1,18 @@
-load('C:\Users\Sur lab\Documents\Noisy_mutual_inhibition\NoisyMutualInhibition\MatlabAnalyses\biasvar_dualProcess_191219.mat');
+if strcmp(getenv('computername'), 'LMN')
+    load('C:\Users\Le\Documents\MIT\Jazayeri\Seth_Noisy_Mutual_Inhibition\NoisyMutualInhibition\MatlabAnalyses\biasvar_dualProcess_013020c.mat');
+else
+    load('C:\Users\Sur lab\Documents\Noisy_mutual_inhibition\NoisyMutualInhibition\MatlabAnalyses\biasvar_dualProcess_013020.mat');
+end
 
-bias1 = collated_bias_var(:,1);
-biasmodel1 = collated_bias_var(:,2);
-bias2 = collated_bias_var(:,3);
-biasmodel2 = collated_bias_var(:,4);
+bias1 = collated_bias_var(:,2);
+biasmodel1 = collated_bias_var(:,1);
+bias2 = collated_bias_var(:,4);
+biasmodel2 = collated_bias_var(:,3);
 
-var1 = collated_bias_var(:,5);
-varmodel1 = collated_bias_var(:,6);
-var2 = collated_bias_var(:,7);
-varmodel2 = collated_bias_var(:,8);
+var1 = collated_bias_var(:,6);
+varmodel1 = collated_bias_var(:,5);
+var2 = collated_bias_var(:,8);
+varmodel2 = collated_bias_var(:,7);
 
 
 plotBiasVarNhat([bias1 bias2], [var1 var2], ...

@@ -1,4 +1,4 @@
-load IK_relationship_multi_020719_thres0_7_constant_stage0_750ms_optimized3_Krange1to7B.mat
+load('C:\Users\Le\Dropbox (MIT)\Jazayeri\NoisyMutualInhibition_Dec2019\PlotTools\IK_relationship_multi_020719_thres0_7_constant_stage0_750ms_optimized3_Krange1to7B.mat');
 %close all
 colors = [247,251,255
     222,235,247
