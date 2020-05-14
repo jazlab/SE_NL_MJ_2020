@@ -1,6 +1,6 @@
 close all;
 
-load SWE_sim_results%_021119_with_warmup.mat
+load SWE_sim_results_021119_with_warmup.mat
 
 figure('Position', [100, 200, 1000, 600]);
 h1 = subplot('121');
@@ -49,7 +49,7 @@ plotUnity;
 mymakeaxis(gca, 'xytitle', '1-2-3-Go',...
     'xticks', [600, 800, 1000], 'yticks', [600 800 1000],...
     'interpreter', 'latex', 'font_size', 20)
-legend1 = legend([l1, l2], {'Model', 'Observed', ''});
+legend1 = legend([l1, l2], {'Behavior', 'Model', ''});
 
 set(legend1,...
     'Position',[0.83 0.42 0.05 0.05],...
